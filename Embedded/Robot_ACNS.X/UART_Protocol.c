@@ -209,12 +209,13 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             sign = payload[8];
             
             Waypoint_t nWaypoint = {
-                ghostPosition.x + ((float) x) / 1000.0f - 0.13f,
+                ghostPosition.x + ((float) x) / 1000.0f + 0.13f,
                 ghostPosition.y + ((float) (sign ? -y : y)) / 1000.0f,
                 0
             };
             if(waypoint_index != MAX_POS) {
                 waypoints[waypoint_index++] = nWaypoint;
+                LED_BLANCHE_1 = 1;
             }
             break;
             

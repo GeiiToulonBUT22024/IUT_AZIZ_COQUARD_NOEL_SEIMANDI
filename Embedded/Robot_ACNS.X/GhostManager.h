@@ -60,6 +60,8 @@ void UpdateTrajectory();
 void SendGhostData();
 void InitTrajectoryGenerator(void);
 void rotationTarget(double currentTime);
+void setStartEngine(int value);
+int getStartEngine();
 
 #endif	/* GHOSTMANAGER_H */
 

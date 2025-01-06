@@ -8,14 +8,15 @@
 #include "QEI.h"
 
 extern unsigned long timestamp;
+int startEngine = 0;
 
 volatile GhostPosition ghostPosition;
 
-double maxAngularSpeed = 1.5; // rad/s
-double angularAccel = 2.5; // rad/s^2
-double maxLinearSpeed = 1; // m/s
-double minMaxLinenearSpeed = 0.5; // m/s
-double linearAccel = 1; // m/s^2
+double maxAngularSpeed = 0.2; // rad/s
+double angularAccel = 0.2; // rad/s^2
+double maxLinearSpeed = 0.2; // m/s
+double minMaxLinenearSpeed = 0.2; // m/s
+double linearAccel = 0.2; // m/s^2
 
 int current_state = IDLE;
 int waypoint_index = 0;
@@ -27,7 +28,7 @@ Waypoint_t waypoints[MAX_POS];
 
 void InitTrajectoryGenerator(void) {
     // ghostPosition.x = 0.0;
-    ghostPosition.x = 1.33;
+    ghostPosition.x = 0.0;
     ghostPosition.y = 0.0;
     ghostPosition.theta = -PI;
     ghostPosition.linearSpeed = 0.0;
@@ -38,8 +39,19 @@ void InitTrajectoryGenerator(void) {
     ghostPosition.distanceToTarget = 0.0;
 }
 
+void setStartEngine(int value) {
+    startEngine = value;
+}
+
+int getStartEngine() {
+    return startEngine;
+}
+
 void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat actuel par rapport au waypoint
 {
+    
+    if(!startEngine) return;
+    
     // Target -> le waypoint : c'est où on veut aller
     double thetaTarget = atan2(ghostPosition.targetY - ghostPosition.y, ghostPosition.targetX - ghostPosition.x);
     // Theta entre le robot et où on veut aller
@@ -59,8 +71,8 @@ void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat a
 
     /* ################## IDLE ################## */
     if (current_state == IDLE) {
-        if(waypoint_index < MAX_POS) {
-            Waypoint_t nextWay = waypoints[waypoint_index++];
+        if(waypoint_index == 1) {
+            Waypoint_t nextWay = waypoints[0];
             ghostPosition.targetX = nextWay.x;
             ghostPosition.targetY = nextWay.y;
             current_state = (nextWay.last_rotate ? LASTROTATE : ROTATING);

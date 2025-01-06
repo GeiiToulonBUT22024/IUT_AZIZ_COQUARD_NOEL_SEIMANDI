@@ -35,7 +35,9 @@ void InitIO()
     //****** Moteurs ************************
 
     // Configuration des entrées
-    
+    _TRISH0 = 1; // Chargement de l'input sur BTN 1
+    _TRISH1 = 1;
+    _TRISH2 = 1;
 
     // Configuration des pins remappables    
     //*************************************************************

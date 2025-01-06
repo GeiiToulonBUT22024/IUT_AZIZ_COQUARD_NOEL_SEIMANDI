@@ -65,9 +65,6 @@ int main(void) {
     SetupPidAsservissement(&robotState.PidTheta, 1.0f,  30.0f,0.0f, 100.0f, 100.0f, 100.0f);
     SetupPidAsservissement(&robotState.PdTheta, 0.625f,  0.0f, 0.5f, 100.0f, 100.0f, 100.0f);
     SetupPidAsservissement(&robotState.PdLin, 0.0f,  0.0f, 0.5f, 100.0f, 100.0f, 100.0f);
-    
-
-
 
     /****************************************************************************************************/
     // Boucle Principale
@@ -84,44 +81,55 @@ int main(void) {
         {
             unsigned char c = CB_RX2_Get();
             UartDecodeMessage_UART2(c);
-        }   
-        
-        if (ADCIsConversionFinished()) {
-            ADCClearConversionFinishedFlag();
-            unsigned int * result = ADCGetResult();
-            
-            float volts = ((float) result [0])* 3.3 / 4096;
-            if (volts < 0.325)volts = 0.325;
-            robotState.distanceTelemetreExtremeGauche = 34 / volts - 5;
-            
-            volts = ((float) result [1])* 3.3 / 4096;
-            if (volts < 0.325)volts = 0.325;
-            robotState.distanceTelemetreGauche = 34 / volts - 5;
-            
-            volts = ((float) result [2])* 3.3 / 4096;
-            if (volts < 0.325)volts = 0.325;
-            robotState.distanceTelemetreCentre = 34 / volts - 5;
-            
-            volts = ((float) result [3])* 3.3 / 4096;
-            if (volts < 0.325)volts = 0.325;
-            robotState.distanceTelemetreDroit = 34 / volts - 5;
-            
-            volts = ((float) result [4])* 3.3 / 4096;
-            if (volts < 0.325)volts = 0.325;
-            robotState.distanceTelemetreExtremeDroit = 34 / volts - 5;
-            
-//            if (robotState.distanceTelemetreExtremeGauche <= 20) LED_BLANCHE_1 = 1;
-//            else LED_BLANCHE_1 = 0;
-//            if (robotState.distanceTelemetreGauche <= 20) LED_BLEUE_1 = 1;
-//            else LED_BLEUE_1 = 0;
-//            if (robotState.distanceTelemetreCentre <= 20) LED_ORANGE_1 = 1;
-//            else LED_ORANGE_1 = 0;
-//            if (robotState.distanceTelemetreDroit <= 20) LED_ROUGE_1 = 1;
-//            else LED_ROUGE_1 = 0;
-//            if (robotState.distanceTelemetreExtremeDroit <= 20) LED_VERTE_1 = 1;
-//            else LED_VERTE_1 = 0;
-          
         }
+        
+        if(_RH0) {
+            setStartEngine(1);
+        }
+        
+        if(getStartEngine()) {
+            LED_VERTE_1 = 1;
+        }
+        else {
+            LED_VERTE_1 = 0;
+        }
+        
+//        if (ADCIsConversionFinished()) {
+//            ADCClearConversionFinishedFlag();
+//            unsigned int * result = ADCGetResult();
+//            
+//            float volts = ((float) result [0])* 3.3 / 4096;
+//            if (volts < 0.325)volts = 0.325;
+//            robotState.distanceTelemetreExtremeGauche = 34 / volts - 5;
+//            
+//            volts = ((float) result [1])* 3.3 / 4096;
+//            if (volts < 0.325)volts = 0.325;
+//            robotState.distanceTelemetreGauche = 34 / volts - 5;
+//            
+//            volts = ((float) result [2])* 3.3 / 4096;
+//            if (volts < 0.325)volts = 0.325;
+//            robotState.distanceTelemetreCentre = 34 / volts - 5;
+//            
+//            volts = ((float) result [3])* 3.3 / 4096;
+//            if (volts < 0.325)volts = 0.325;
+//            robotState.distanceTelemetreDroit = 34 / volts - 5;
+//            
+//            volts = ((float) result [4])* 3.3 / 4096;
+//            if (volts < 0.325)volts = 0.325;
+//            robotState.distanceTelemetreExtremeDroit = 34 / volts - 5;
+//            
+////            if (robotState.distanceTelemetreExtremeGauche <= 20) LED_BLANCHE_1 = 1;
+////            else LED_BLANCHE_1 = 0;
+////            if (robotState.distanceTelemetreGauche <= 20) LED_BLEUE_1 = 1;
+////            else LED_BLEUE_1 = 0;
+////            if (robotState.distanceTelemetreCentre <= 20) LED_ORANGE_1 = 1;
+////            else LED_ORANGE_1 = 0;
+////            if (robotState.distanceTelemetreDroit <= 20) LED_ROUGE_1 = 1;
+////            else LED_ROUGE_1 = 0;
+////            if (robotState.distanceTelemetreExtremeDroit <= 20) LED_VERTE_1 = 1;
+////            else LED_VERTE_1 = 0;
+//          
+//        }
     //PWMSetSpeedConsigne(vitessed,MOTEUR_GAUCHE);
     //PWMSetSpeedConsigne(vitesseg,MOTEUR_DROIT);
     //PWMSetSpeedConsignePolaire(1, 0);

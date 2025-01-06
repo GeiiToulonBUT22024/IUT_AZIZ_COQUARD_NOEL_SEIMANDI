@@ -36,12 +36,12 @@ void InitTimer23(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
     IFS0bits.T3IF = 0; // Clear Timer3 Interrupt Fla
-//    if (toggle) {
-//        sendPID(0x0011);
-//    } else {
-//        sendAsserv(0x0091);}
-//    
-//        toggle = !toggle;
+    if (toggle) {
+        sendPID(0x0011);
+    } else {
+        sendAsserv(0x0091);}
+    
+        toggle = !toggle;
     }
     //Initialisation d?un timer 16 bits
 
@@ -63,19 +63,19 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
     void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) {
         IFS0bits.T1IF = 0;
         ADC1StartConversionSequence();
-        OperatingSystemLoop();
+        // OperatingSystemLoop();
         QEIUpdateData();
-       // PWMUpdateSpeed();
+        PWMUpdateSpeed();
         
        // ----------------------------- a décommenter la on test l'uart de la cam 
-       // UpdateTrajectory();
-       // UpdateAsservissement();
+        UpdateTrajectory();
+        UpdateAsservissement();
         
         
         subCount += 1;
         if (subCount % 20 == 0) {
             SendPositionData();
-            //SendGhostData();
+            SendGhostData();
             sendAsserv(0x0091);
         }
         if(subCount % 250 == 0){
