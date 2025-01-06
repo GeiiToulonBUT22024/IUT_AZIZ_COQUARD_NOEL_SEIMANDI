@@ -7,6 +7,7 @@
 #include "QEI.h"
 #include "UART_Protocol.h"
 #include "asservissement.h"
+#include "GhostManager.h"
 #include "Robot.h"
 #include "ChipConfig.h"
 
@@ -65,10 +66,10 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
         ADC1StartConversionSequence();
         OperatingSystemLoop();
         QEIUpdateData();
-       // PWMUpdateSpeed();
+        PWMUpdateSpeed();
         
        
-//        UpdateTrajectory();
+        UpdateTrajectory();
         UpdateAsservissement();
         
         

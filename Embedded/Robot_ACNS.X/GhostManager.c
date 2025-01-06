@@ -27,9 +27,9 @@ Waypoint_t waypoints[MAX_POS];
 
 void InitTrajectoryGenerator(void) {
     // ghostPosition.x = 0.0;
-    ghostPosition.x = 1.33;
+    ghostPosition.x = 0.0;
     ghostPosition.y = 0.0;
-    ghostPosition.theta = -PI;
+    ghostPosition.theta = 0;
     ghostPosition.linearSpeed = 0.0;
     ghostPosition.angularSpeed = 0.0;
     ghostPosition.targetX = 0.0;

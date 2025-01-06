@@ -1,5 +1,6 @@
 #include "Utilities.h"
 #include "math.h"
+#include "GhostManager.h"
 #include <xc.h>
 
 
@@ -88,4 +89,10 @@ float moduloByAngle(double angleToCenterAround, double angleToCorrect ){
     int decalageNbTours = (int) round((angleToCorrect - angleToCenterAround)/ (2*M_PI));
     double thetaDest = angleToCorrect - decalageNbTours * 2 * M_PI;
     return thetaDest;
+}
+
+
+void changeRef(float *x, float *y, float theta , float xref, float yref){
+    *x = ((*x) * cos(theta) - (*y) * sin(theta)) + xref;
+    *y = ((*x) * sin(theta) + (*y) * cos(theta)) + yref; 
 }

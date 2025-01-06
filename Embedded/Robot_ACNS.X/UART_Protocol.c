@@ -199,6 +199,7 @@ unsigned char receivedChecksum_UART2;
 int x = 0;
 int y = 0;
 int sign = 0;
+float tempX , tempY;
 
 void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigned char* payload) {
     //Fonction appelee apres le decodage pour executer l?action correspondant au message recu
@@ -207,9 +208,15 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             x = payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24;
             y = payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24;
             
+            tempX = ((float) x) / 1000.0f + 0.03f;
+            tempY = ((float) y) / 1000.0f;
+            
+            changeRef(&tempX,&tempY,ghostPosition.theta, ghostPosition.x, ghostPosition.y);
+            
+            
             Waypoint_t nWaypoint = {
-                ghostPosition.x + ((float) x) / 1000.0f + 0.13f,
-                ghostPosition.y + ((float) y) / 1000.0f,
+               tempX,
+               tempY,
                 0
             };
             if(waypoint_index != MAX_POS) {
@@ -221,8 +228,14 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             x = payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24;
             y = payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24;
             
-            nWaypoint.x = ghostPosition.x + ((float) x) / 1000.0f - 0.13f;
-            nWaypoint.y = ghostPosition.y - ((float) y) / 1000.0f;
+            
+            
+            tempX = ((float) x) / 1000.0f + 0.03f;
+            tempY = -((float) y) / 1000.0f;
+            
+            changeRef(&tempX,&tempY,ghostPosition.theta, ghostPosition.x, ghostPosition.y);
+            nWaypoint.x = x;
+            nWaypoint.y = y;
             nWaypoint.last_rotate = 0;
             
             if(waypoint_index != MAX_POS) {
