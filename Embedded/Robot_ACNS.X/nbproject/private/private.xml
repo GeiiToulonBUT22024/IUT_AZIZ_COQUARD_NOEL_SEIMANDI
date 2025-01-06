@@ -5,7 +5,10 @@
         <group>
             <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/main.c</file>
             <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/UART_Protocol.c</file>
+            <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/timer.c</file>
+            <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/GhostManager.c</file>
             <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/CB_RX2.c</file>
+            <file>file:/C:/Github/IUT_AZIZ_COQUARD_NOEL_SEIMANDI/Embedded/Robot_ACNS.X/GhostManager.h</file>
         </group>
     </open-files>
 </project-private>

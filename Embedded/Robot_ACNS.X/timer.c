@@ -67,9 +67,9 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
         QEIUpdateData();
        // PWMUpdateSpeed();
         
-       // ----------------------------- a décommenter la on test l'uart de la cam 
-       // UpdateTrajectory();
-       // UpdateAsservissement();
+       
+//        UpdateTrajectory();
+        UpdateAsservissement();
         
         
         subCount += 1;

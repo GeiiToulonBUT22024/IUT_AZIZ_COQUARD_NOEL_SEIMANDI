@@ -203,14 +203,13 @@ int sign = 0;
 void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigned char* payload) {
     //Fonction appelee apres le decodage pour executer l?action correspondant au message recu
     switch (rcvFunction) {
-        case 0x00:
+        case 0x98:
             x = payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24;
             y = payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24;
-            sign = payload[8];
             
             Waypoint_t nWaypoint = {
-                ghostPosition.x + ((float) x) / 1000.0f - 0.13f,
-                ghostPosition.y + ((float) (sign ? -y : y)) / 1000.0f,
+                ghostPosition.x + ((float) x) / 1000.0f + 0.13f,
+                ghostPosition.y + ((float) y) / 1000.0f,
                 0
             };
             if(waypoint_index != MAX_POS) {
@@ -218,7 +217,17 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             }
             break;
             
-        case 0x01:  
+        case 0x99:
+            x = payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24;
+            y = payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24;
+            
+            nWaypoint.x = ghostPosition.x + ((float) x) / 1000.0f - 0.13f;
+            nWaypoint.y = ghostPosition.y - ((float) y) / 1000.0f;
+            nWaypoint.last_rotate = 0;
+            
+            if(waypoint_index != MAX_POS) {
+                waypoints[waypoint_index++] = nWaypoint;
+            }
             break;        
         default:
             break;
