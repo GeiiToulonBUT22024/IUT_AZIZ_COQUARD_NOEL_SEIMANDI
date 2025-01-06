@@ -76,13 +76,13 @@ void UpdateAsservissement(){
     robotState.correctionVitesseLineaire = Correcteur(&robotState.PidX, robotState.PidX.erreur);
     robotState.correctionVitesseAngulaire = Correcteur(&robotState.PidTheta, robotState.PidTheta.erreur);
     
-    robotState.PdTheta.erreur = ghostPosition.theta - robotState.angleRadianFromOdometry;    
+    // robotState.PdTheta.erreur = ghostPosition.theta - robotState.angleRadianFromOdometry;    
     // robotState.correctionVitesseAngulaire += Correcteur(&robotState.PdTheta, robotState.PdTheta.erreur);
     
-    double normeGhost = sqrt(ghostPosition.x * ghostPosition.x + ghostPosition.y * ghostPosition.y);
-    double normeOdo = sqrt(robotState.xPosFromOdometry * robotState.xPosFromOdometry + robotState.yPosFromOdometry * robotState.yPosFromOdometry);
+    // double normeGhost = sqrt(ghostPosition.x * ghostPosition.x + ghostPosition.y * ghostPosition.y);
+    // double normeOdo = sqrt(robotState.xPosFromOdometry * robotState.xPosFromOdometry + robotState.yPosFromOdometry * robotState.yPosFromOdometry);
     
-    robotState.PdLin.erreur = normeGhost - normeOdo;
+    // robotState.PdLin.erreur = normeGhost - normeOdo;
     // robotState.correctionVitesseLineaire += Correcteur(&robotState.PdLin, robotState.PdLin.erreur);
     
     robotState.vitesseDroiteConsigne = -COEF_VITESSE_POURCENT * (robotState.correctionVitesseLineaire + (robotState.correctionVitesseAngulaire * DISTROUES/2));

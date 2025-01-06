@@ -12,11 +12,11 @@ int startEngine = 0;
 
 volatile GhostPosition ghostPosition;
 
-double maxAngularSpeed = 0.2; // rad/s
-double angularAccel = 0.2; // rad/s^2
-double maxLinearSpeed = 0.2; // m/s
-double minMaxLinenearSpeed = 0.2; // m/s
-double linearAccel = 0.2; // m/s^2
+double maxAngularSpeed = 0.5; // rad/s
+double angularAccel = 0.5; // rad/s^2
+double maxLinearSpeed = 0.5; // m/s
+double minMaxLinenearSpeed = 0.5; // m/s
+double linearAccel = 0.5; // m/s^2
 
 int current_state = IDLE;
 int waypoint_index = 0;
@@ -30,7 +30,7 @@ void InitTrajectoryGenerator(void) {
     // ghostPosition.x = 0.0;
     ghostPosition.x = 0.0;
     ghostPosition.y = 0.0;
-    ghostPosition.theta = -PI;
+    ghostPosition.theta = 0.0;
     ghostPosition.linearSpeed = 0.0;
     ghostPosition.angularSpeed = 0.0;
     ghostPosition.targetX = 0.0;
@@ -75,14 +75,12 @@ void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat a
             Waypoint_t nextWay = waypoints[0];
             ghostPosition.targetX = nextWay.x;
             ghostPosition.targetY = nextWay.y;
-            current_state = (nextWay.last_rotate ? LASTROTATE : ROTATING);
-        }
-        else {
-            waypoint_index = 0;
+            current_state = ROTATING;
+            // waypoint_index++;-> TRAP
         }
         
     /* ################## ROTATIONING ################## */
-    } else if (current_state == ROTATING || current_state == LASTROTATE) {
+    } else if (current_state == ROTATING) {
 
         if (ghostPosition.angularSpeed < 0) thetaArret = -thetaArret;
 

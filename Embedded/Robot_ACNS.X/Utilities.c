@@ -89,3 +89,8 @@ float moduloByAngle(double angleToCenterAround, double angleToCorrect ){
     double thetaDest = angleToCorrect - decalageNbTours * 2 * M_PI;
     return thetaDest;
 }
+
+void changeRef(float* x, float* y, float theta, float xref, float yref) {
+    *x = (cos(theta) * (*x) - sin(theta) * (*y)) + xref;
+    *y = (sin(theta) * (*x) + cos(theta) * (*y)) + yref;
+}

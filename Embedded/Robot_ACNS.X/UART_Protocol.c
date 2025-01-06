@@ -2,6 +2,7 @@
 #include "UART_Protocol.h"
 #include "CB_TX1.h"
 #include <stdint.h>
+#include <math.h>
 #include "timer.h"
 #include "IO.h"
 #include "CB_RX1.h"
@@ -200,6 +201,26 @@ int x = 0;
 int y = 0;
 int sign = 0;
 
+void addWaypoint(float x, float y) {
+    
+    
+    float tempX = x; //+ 0.13f;
+    float tempY = y;
+    
+    if(sqrt(tempX * tempX + tempY * tempY) < 0.3f) return; 
+    
+    changeRef(&tempX, &tempY, ghostPosition.theta, ghostPosition.x, ghostPosition.y);
+    Waypoint_t nWaypoint = {
+        tempX,
+        tempY,
+        0
+    };
+    if(waypoint_index != MAX_POS) {
+         waypoints[waypoint_index++] = nWaypoint;
+        LED_BLANCHE_1 = 1;
+    }
+}
+
 void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigned char* payload) {
     //Fonction appelee apres le decodage pour executer l?action correspondant au message recu
     switch (rcvFunction) {
@@ -207,16 +228,7 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             x = payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24;
             y = payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24;
             sign = payload[8];
-            
-            Waypoint_t nWaypoint = {
-                ghostPosition.x + ((float) x) / 1000.0f + 0.13f,
-                ghostPosition.y + ((float) (sign ? -y : y)) / 1000.0f,
-                0
-            };
-            if(waypoint_index != MAX_POS) {
-                waypoints[waypoint_index++] = nWaypoint;
-                LED_BLANCHE_1 = 1;
-            }
+            addWaypoint(((float) x) / 1000.0f, ((float) (sign ? -y : y)) / 1000.0f);
             break;
             
         case 0x01:  

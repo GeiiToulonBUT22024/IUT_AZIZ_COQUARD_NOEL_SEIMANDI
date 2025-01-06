@@ -15,6 +15,7 @@ void getBytesFromFloat(unsigned char *p, int index, float f);
 void getBytesFromInt32(unsigned char *p, int index, long in);
 void getBytesFromDouble(unsigned char *p, int index, double d);
 float moduloByAngle(double thetawp, double thetaRob );
+void changeRef(float* x, float* y, float theta, float xref, float yref);
 
 #endif /*UTILITIES_H*/
 
