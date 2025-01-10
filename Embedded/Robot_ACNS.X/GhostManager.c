@@ -151,6 +151,11 @@ void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat a
             ghostPosition.linearSpeed = 0;
             ghostPosition.x = ghostPosition.targetX;
             ghostPosition.y = ghostPosition.targetY;
+            
+//            ghostPosition.theta = robotState.angleRadianFromOdometry;
+//            ghostPosition.x = robotState.xPosFromOdometry;
+//            ghostPosition.y = robotState.yPosFromOdometry;
+                    
             current_state = IDLE;
         }
         
