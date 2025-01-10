@@ -213,12 +213,12 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             
             changeRef(&tempX,&tempY,ghostPosition.theta, ghostPosition.x, ghostPosition.y);
             
-            
             Waypoint_t nWaypoint = {
                tempX,
                tempY,
                 0
             };
+            
             if(waypoint_index != MAX_POS) {
                 waypoints[waypoint_index++] = nWaypoint;
             }
@@ -234,8 +234,8 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             tempY = -((float) y) / 1000.0f;
             
             changeRef(&tempX,&tempY,ghostPosition.theta, ghostPosition.x, ghostPosition.y);
-            nWaypoint.x = x;
-            nWaypoint.y = y;
+            nWaypoint.x = tempX;
+            nWaypoint.y = tempY;
             nWaypoint.last_rotate = 0;
             
             if(waypoint_index != MAX_POS) {
