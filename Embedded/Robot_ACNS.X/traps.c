@@ -1,149 +1,158 @@
-/***********************************************************************
- * This file provides a basic template for writing dsPIC30F trap       *
- * handlers in C language for the C30 compiler                         *
- *                                                                     *
- * Add this file into your MPLAB project. Build your project, program  *
- * the device and run. If any trap occurs during code execution, the   *
- * processor vectors to one of these routines.                         *
- *                                                                     *
- * For additional information about dsPIC architecture and language    *
- * tools, refer to the following documents:                            *
- *                                                                     *
- * MPLAB C30 Compiler User's Guide                        : DS51284    *
- * dsPIC 30F MPLAB ASM30, MPLAB LINK30 and Utilites                    *
- *                                           User's Guide : DS51317    *
- * Getting Started with dsPIC DSC Language Tools          : DS51316    *
- * dsPIC 30F Language Tools Quick Reference Card          : DS51322    *
- * dsPIC 30F 16-bit MCU Family Reference Manual           : DS70046    *
- * dsPIC 30F General Purpose and Sensor Families                       *
- *                                           Data Sheet   : DS70083    *
- * dsPIC 30F/33F Programmer's Reference Manual            : DS70157    *
- *                                                                     *
- * Template file has been compiled with MPLAB C30 v3.00.               *
- *                                                                     *
- ***********************************************************************
- *                                                                     *
- *    Author:                                                          *
- *    Company:                                                         *
- *    Filename:       traps.c                                          *
- *    Date:           04/11/2007                                       *
- *    File Version:   3.00                                             *
- *    Devices Supported:  All PIC24F,PIC24H,dsPIC30F,dsPIC33F devices  *
- *                                                                     *
- **********************************************************************/
+/**
+  System Traps Generated Driver File 
+
+  @Company:
+    Microchip Technology Inc.
+
+  @File Name:
+    traps.h
+
+  @Summary:
+    This is the generated driver implementation file for handling traps
+    using PIC24 / dsPIC33 / PIC32MM MCUs
+
+  @Description:
+    This source file provides implementations for PIC24 / dsPIC33 / PIC32MM MCUs traps.
+    Generation Information : 
+        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.166.0
+        Device            :  dsPIC33EP256MC502
+    The generated drivers are tested against the following:
+        Compiler          :  XC16 v1.41
+        MPLAB             :  MPLAB X v5.30
+*/
 /*
- Updates:
- * Andrew Pullin    01/28/15    Added _where_was_i precall to all traps
- *                              Removed old-style includes, added <xc>
+    (c) 2019 Microchip Technology Inc. and its subsidiaries. You may use this
+    software and any derivatives exclusively with Microchip products.
+
+    THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
+    EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
+    WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
+    PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, COMBINATION
+    WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION.
+
+    IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
+    INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
+    WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
+    BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
+    FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
+    ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+    THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+
+    MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE
+    TERMS.
+*/
+
+/**
+    Section: Includes
+*/
+#include <xc.h>
+#include "traps.h"
+#include "PWM.h"
+#include "IO.h"
+
+
+#define ERROR_HANDLER __attribute__((interrupt, no_auto_psv, keep, section("error_handler")))
+#define ERROR_HANDLER_NORETURN ERROR_HANDLER __attribute__((noreturn))
+#define FAILSAFE_STACK_GUARDSIZE 8
+
+/**
+ * a private place to store the error code if we run into a severe error
  */
+static uint16_t TRAPS_error_code = -1;
 
-#include<xc.h>
-
-//Plain trap attribute
-#define _trapISR           __attribute__((interrupt,no_auto_psv))
-//Augmented trap attr, which calls assembly func _where_was_i first
-#define _trapISR_WhereWasI __attribute__((interrupt(preprologue("rcall _where_was_i")),no_auto_psv))
-
-//imageproc-lib includes
-//#include "utils.h"  //For LED control
-
-//extern is acceptable here because it is referencing an assembly file
-//extern unsigned long __errAddress;
-//TODO: retained here until __errAddress can be tested in debug context; AP
-
-/* ****************************************************************
- * Standard Exception Vector handlers if ALTIVT (INTCON2<15>) = 0  *
- *                                                                 *
- * Not required for labs but good to always include                *
- ******************************************************************/
-void _trapISR_WhereWasI _OscillatorFail(void) {
-
-    INTCON1bits.OSCFAIL = 0;
-    while (1);
-}
-
- void _trapISR_WhereWasI _AddressError(void) {
-
-    INTCON1bits.ADDRERR = 0; //Clear the trap flags
-    while (1) {
-        //asm volatile("btg   PORTF, #1");
-//        LED_1 ^= 1;
-//        delay_ms(100);
-//        LED_2 ^= 1;
-//        delay_ms(100);
-//        LED_3 ^= 1;
-//        delay_ms(100);
-        //for (k=0; k<100; k++) { delay_ms(5); }   // Waste approximatelly 50ms
-    };
-
-    while (1);
-}
-
-void _trapISR_WhereWasI _StackError(void) {
-
-    INTCON1bits.STKERR = 0;
-    while (1);
-}
-
-void _trapISR_WhereWasI _MathError(void) {
-
-    INTCON1bits.MATHERR = 0;
-    while (1);
-}
-
-/* ****************************************************************
- * Alternate Exception Vector handlers if ALTIVT (INTCON2<15>) = 1 *
- *                                                                 *
- * Not required for labs but good to always include                *
- ******************************************************************/
-void _trapISR_WhereWasI _AltOscillatorFail(void) {
-
-    INTCON1bits.OSCFAIL = 0;
-    while (1);
-}
-
-void _trapISR_WhereWasI _AltAddressError(void) {
-
-    INTCON1bits.ADDRERR = 0;
-    while (1);
-}
-
-void _trapISR_WhereWasI _AltStackError(void) {
-
-    INTCON1bits.STKERR = 0;
-    while (1);
-}
-
-void _trapISR_WhereWasI _AltMathError(void) {
-
-    INTCON1bits.MATHERR = 0;
-    while (1);
-}
-
-
-/*  ; where_was_i assembly helper code
-    ;
-    ; This code is called by the Address Error Trap ISR.  It will save the address
-    ; of the instruction that caused an illegal address reference trap.  Place
-    ; _errAddress in your Watch window to see what happend.
-    ;
-    ; GLOBAL: _errAddress
-    ;
+/**
+ * Halts 
+ * 
+ * @param code error code
  */
+void __attribute__((naked, noreturn, weak)) TRAPS_halt_on_error(uint16_t code)
+{
+    PWMSetSpeed(0);
+    TRAPS_error_code = code;
+#ifdef __DEBUG    
+    __builtin_software_breakpoint();
+    /* If we are in debug mode, cause a software breakpoint in the debugger */
+#endif
+    while(1);
+    
+}
 
-asm("; GLOBAL: _errAddress\n\t"
-    ";\n\t"
-    "  .section *,bss,near\n\t"
-    "  .global __errAddress\n\t"
-    "__errAddress:   .space 4\n\t"
-    "  .text\n\t"
-    "  .global _where_was_i\n\t"
-    "_where_was_i:\n\t"
-    "  push.d w0\n\t"
-    "  sub w15,#12,w1           ; twelve bytes pushed since last trap!\n\t"
-    "  mov [w1++], w0\n\t"
-    "  mov w0, __errAddress\n\t"
-    "  mov [w1], w0\n\t"
-    "  mov.b WREG, __errAddress+2\n\t"
-    "  pop.d w0\n\t"
-    "  return\n\t");
+/**
+ * Sets the stack pointer to a backup area of memory, in case we run into
+ * a stack error (in which case we can't really trust the stack pointer)
+ */
+inline static void use_failsafe_stack(void)
+{
+    static uint8_t failsafe_stack[32];
+    asm volatile (
+        "   mov    %[pstack], W15\n"
+        :
+        : [pstack]"r"(failsafe_stack)
+    );
+/* Controls where the stack pointer limit is, relative to the end of the
+ * failsafe stack
+ */    
+    SPLIM = (uint16_t)(((uint8_t *)failsafe_stack) + sizeof(failsafe_stack) 
+            - FAILSAFE_STACK_GUARDSIZE);
+}
+
+
+/** Oscillator Fail Trap vector**/
+void ERROR_HANDLER_NORETURN _OscillatorFail(void)
+{
+    INTCON1bits.OSCFAIL = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_OSC_FAIL);
+}
+/** Stack Error Trap Vector**/
+void ERROR_HANDLER_NORETURN _StackError(void)
+{
+    /* We use a failsafe stack: the presence of a stack-pointer error
+     * means that we cannot trust the stack to operate correctly unless
+     * we set the stack pointer to a safe place.
+     */
+    use_failsafe_stack(); 
+    INTCON1bits.STKERR = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_STACK_ERR);
+}
+/** Address error Trap vector**/
+void ERROR_HANDLER_NORETURN _AddressError(void)
+{
+    INTCON1bits.ADDRERR = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_ADDRESS_ERR);
+}
+/** Math Error Trap vector**/
+void ERROR_HANDLER_NORETURN _MathError(void)
+{
+    INTCON1bits.MATHERR = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_MATH_ERR);
+}
+/** DMAC Error Trap vector**/
+void ERROR_HANDLER_NORETURN _DMACError(void)
+{
+    INTCON1bits.DMACERR = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_DMAC_ERR);
+}
+/** Generic Hard Trap vector**/
+void ERROR_HANDLER_NORETURN _HardTrapError(void)
+{
+    INTCON4bits.SGHT = 0;  //Clear the trap flag
+    TRAPS_halt_on_error(TRAPS_HARD_ERR);
+}
+/** Generic Soft Trap vector**/
+void ERROR_HANDLER_NORETURN _SoftTrapError(void)
+{
+    if(INTCON3bits.DAE)
+    {
+      INTCON3bits.DAE = 0;  //Clear the trap flag
+      TRAPS_halt_on_error(TRAPS_DAE_ERR);
+    }
+
+    if(INTCON3bits.DOOVR)
+    {
+      INTCON3bits.DOOVR = 0;  //Clear the trap flag
+      TRAPS_halt_on_error(TRAPS_DOOVR_ERR);
+    }
+
+    while(1);
+}
+

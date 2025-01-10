@@ -10,6 +10,8 @@
 extern unsigned long timestamp;
 
 volatile GhostPosition ghostPosition;
+extern volatile int waypoint_received;
+volatile int mooving;
 
 double maxAngularSpeed = 1.5; // rad/s
 double angularAccel = 2.5; // rad/s^2
@@ -59,11 +61,14 @@ void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat a
 
     /* ################## IDLE ################## */
     if (current_state == IDLE) {
-        if(waypoint_index < MAX_POS) {
-            Waypoint_t nextWay = waypoints[waypoint_index++];
+        if(waypoint_received == 1) {
+            Waypoint_t nextWay = waypoints[0];
             ghostPosition.targetX = nextWay.x;
             ghostPosition.targetY = nextWay.y;
-            current_state = (nextWay.last_rotate ? LASTROTATE : ROTATING);
+            current_state = ROTATING;
+            mooving = 1;
+            waypoint_received = 0 ;
+            //}
         }
         else {
             waypoint_index = 0;
@@ -157,6 +162,7 @@ void UpdateTrajectory() // Mise a jour de la trajectoire en fonction de l'etat a
 //            ghostPosition.y = robotState.yPosFromOdometry;
                     
             current_state = IDLE;
+            mooving = 0;
         }
         
         ghostPosition.x += incremntLin * cos(ghostPosition.theta);

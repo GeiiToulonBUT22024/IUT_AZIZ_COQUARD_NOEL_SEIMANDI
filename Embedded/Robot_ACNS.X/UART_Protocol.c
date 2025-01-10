@@ -187,6 +187,8 @@ void robotStateChange(unsigned char rbState ) {
 extern Waypoint_t waypoints[MAX_POS];
 extern volatile GhostPosition ghostPosition;
 extern int waypoint_index;
+volatile int waypoint_received;
+extern volatile int mooving;
 
 unsigned char rcvState_UART2 = STATE_ATTENTE;
 int msgDecodedFunction_UART2 = 0;
@@ -219,9 +221,9 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
                 0
             };
             
-            if(waypoint_index != MAX_POS) {
-                waypoints[waypoint_index++] = nWaypoint;
-            }
+            //if(waypoint_index != MAX_POS) {
+                waypoints[0] = nWaypoint;
+            //}
             break;
             
         case 0x99:
@@ -238,9 +240,9 @@ void UartProcessDecodedMessage_UART2(int rcvFunction, int payloadLength, unsigne
             nWaypoint.y = tempY;
             nWaypoint.last_rotate = 0;
             
-            if(waypoint_index != MAX_POS) {
-                waypoints[waypoint_index++] = nWaypoint;
-            }
+            //if(waypoint_index != MAX_POS) {
+                waypoints[0] = nWaypoint;
+            //}
             break;        
         default:
             break;
@@ -295,7 +297,11 @@ void UartDecodeMessage_UART2(unsigned char c) {
             receivedChecksum_UART2 = UartCalculateChecksum(msgDecodedFunction_UART2, msgDecodedPayloadLength_UART2, msgDecodedPayload_UART2);
             if (calculatedChecksum_UART2 == receivedChecksum_UART2) {
                 //Success, on a un message valide
-                UartProcessDecodedMessage_UART2(msgDecodedFunction_UART2, msgDecodedPayloadLength_UART2, msgDecodedPayload_UART2);
+                if (mooving == 0){
+                    InitTrajectoryGenerator();
+                    UartProcessDecodedMessage_UART2(msgDecodedFunction_UART2, msgDecodedPayloadLength_UART2, msgDecodedPayload_UART2);
+                    waypoint_received = 1;
+                }
             } else {
                // UartProcessDecodedMessage_UART2(msgDecodedFunction_UART2, msgDecodedPayloadLength_UART2, msgDecodedPayload_UART2);
             }

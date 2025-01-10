@@ -36,6 +36,7 @@ float vitesseg = 25;
 
 extern volatile GhostPosition ghostPosition;
 
+
 int main(void) {
     /***************************************************************************************************/
     //Initialisation de l?oscillateur
@@ -85,7 +86,7 @@ int main(void) {
             unsigned char c = CB_RX2_Get();
             UartDecodeMessage_UART2(c);
         }   
-        
+       
         if (ADCIsConversionFinished()) {
             ADCClearConversionFinishedFlag();
             unsigned int * result = ADCGetResult();
